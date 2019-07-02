@@ -1,10 +1,5 @@
-const axios = require('axios');
-const {
-  CURRENCY_TABLES,
-  NO_RATE_STATUS,
-  currencyRateApi,
-  currencyTableApi,
-} = require('./constants');
+const { CURRENCY_TABLES, NO_RATE_STATUS } = require('./constants');
+const { getCurrencyRateFromApi, getCurrencyTableFromApi } = require('./nbp');
 const { previousDay } = require('./helpers');
 
 const noRateForDay = (error) => {
@@ -13,14 +8,9 @@ const noRateForDay = (error) => {
   return status === NO_RATE_STATUS;
 };
 
-// przykładowe użycie, na razie nieużywane
-// const currency = 'BRL';
-// getCurrencyRate(currencies[currency].table, currency, '2016-12-26').then((rate) => {
-//   console.log(rate);
-// });
 async function getCurrencyRate(table, code, date) {
   try {
-    const response = await axios.get(currencyRateApi(table, code, date));
+    const response = await getCurrencyRateFromApi(table, code, date);
 
     const { data: { rates } } = response;
     const { mid } = rates[0];
@@ -41,14 +31,13 @@ async function getCurrencyRate(table, code, date) {
 
 async function getCurrencyTable(table, currencies) {
   try {
-    const response = await axios.get(currencyTableApi(table));
+    const response = await getCurrencyTableFromApi(table);
 
     const { rates } = response.data[0];
     rates.forEach((c) => {
-      currencies[c.code] = { // eslint-disable-line
+      currencies[c.code] = { // eslint-disable-line no-param-reassign
         fullName: c.currency,
         table,
-        rate: c.mid,
       };
     });
 
@@ -68,11 +57,8 @@ async function getAllCurrencies() {
   return currencies;
 }
 
-getAllCurrencies().then((c) => {
-  console.log(c.BRL);
-});
-
 module.exports = {
-  getCurrencyRate,
   getAllCurrencies,
+  getCurrencyRate,
+  getCurrencyTable,
 };

@@ -2,14 +2,10 @@
 const CURRENCY_TABLES = ['A', 'B'];
 const NO_RATE_STATUS = 404;
 
-const nbpApi = 'http://api.nbp.pl/api/exchangerates';
-// TODO wywalić do innego pliku
-const currencyTableApi = table => `${nbpApi}/tables/${table}`;
-const currencyRateApi = (table, currency, date) => `${nbpApi}/rates/${table}/${currency}/${date}`;
+const NBP_API = 'http://api.nbp.pl/api/exchangerates';
 
 module.exports = {
   CURRENCY_TABLES,
   NO_RATE_STATUS,
-  currencyTableApi,
-  currencyRateApi,
+  NBP_API,
 };
